@@ -52,10 +52,13 @@
       }
 
       table {
-        width: 28vw;
+        grid-column: 1 / 3;
+        margin: auto;
+        width: 31vw;
         background-color: hsl(300, 20%, 90%);
         border-radius: .3rem;
         box-shadow: .3rem .3rem .3rem hsl(120, 10%, 75%);
+        cursor: default;
       }
 
       th {
@@ -110,10 +113,14 @@
         border-color: hsl(120, 100%, 25%);
       }
 
-      #sentenceButton {
+      #buttons {
+        grid-column: 1 / 3;
         display: table;
         margin: auto;
-        grid-column: 1 / 3;
+        margin-top: 2rem;
+      }
+
+      #sentenceButton {
         border-radius: .3rem;
         font-size: 1.3rem;
         color: hsl(300, 50%, 20%);
@@ -127,7 +134,9 @@
 
       #displayWindow {
         grid-column: 1 / 3;
-        height: 2rem;
+        height: 3.3rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
         text-align: center;
       }
 
@@ -137,7 +146,19 @@
         text-align: center;
       }
 
-      #sentenceSpan, #responseSpan {
+      #sentenceDiv {
+        display: table;
+        margin: auto;
+        padding: .5rem .5rem;
+        background-color: hsl(300, 5%, 90%);
+        border-radius: .3rem;
+        box-shadow: inset .1rem .1rem .2rem hsl(300, 5%, 80%),
+                    inset -.1rem -.1rem .2rem hsl(300, 5%, 100%);
+        font-size: 2.3rem;
+      }
+
+      #responseSpan {
+        margin-top: 1rem;
         padding: .3rem .5rem;
         background-color: hsl(300, 5%, 90%);
         border-radius: .3rem;
@@ -165,6 +186,7 @@
         box-shadow: inset .1rem .1rem .2rem hsl(120, 10%, 100%),
                     inset -.1rem -.1rem .2rem hsl(120, 10%, 60%);
         transition: all 300ms;
+        cursor: default;
       }
 
       #answerBox div:hover {
@@ -174,54 +196,77 @@
         cursor: default;
       }
 
+      #answer {
+        color: hsl(120, 50%, 40%);
+      }
+
+      @media only screen and (max-width: 600px) {
+
+        body {
+          padding-top: 1rem;
+          font-size: 1rem;
+        }
+
+        .gridBox {
+          display: grid;
+          width: 85vw;
+        }
+
+        header {
+          font-size: 1.3rem;
+        }
+
+        table {
+          width: 85vw;
+        }
+
+        #sentenceDiv {
+          font-size: 1.6rem;
+        }
+
+        #answerBox div {
+          font-size: 1.6rem;
+        }
+
+        #answerBox div:hover {
+          background-color: var(--buttons-color);
+          box-shadow: inset .1rem .1rem .2rem hsl(120, 10%, 100%),
+                      inset -.1rem -.1rem .2rem hsl(120, 10%, 60%);
+        }
+      }
+
     </style>
   </head>
   <body>
     <div class="gridBox">
+
       <header>Verb Practice: To Be</header>
+
       <table class="gridItem">
         <tr>
           <th colspan="2">To Be</th>
         </tr>
         <tr>
-          <td>I am</td>
-          <td>We are</td>
+          <td onmouseover="changeTo(this, 'Yo soy/estoy')" onmouseout="changeTo(this, 'I am')">I am</td>
+          <td onmouseover="changeTo(this, 'Nosotros somos/estamos')" onmouseout="changeTo(this, 'We are')">We are</td>
         </tr>
         <tr>
-          <td>You are</td>
-          <td>You are</td>
+          <td onmouseover="changeTo(this, 'Tú eres/estás')" onmouseout="changeTo(this, 'You are')">You are</td>
+          <td onmouseover="changeTo(this, 'Ustedes son/están')" onmouseout="changeTo(this, 'You are')">You are</td>
         </tr>
         <tr>
-          <td>He/She/It is</td>
-          <td>They are</td>
-        </tr>
-      </table>
-      <table class="gridItem">
-        <tr>
-          <th colspan="2">Estar/Ser</th>
-        </tr>
-        <tr>
-          <td>Yo soy/estoy</td>
-          <td>Nosotros somos/estamos</td>
-        </tr>
-        <tr>
-          <td>Tú eres/estás</td>
-          <td>Ustedes son/están</td>
-        </tr>
-        <tr>
-          <td>Él/Ella/Ello es/está</td>
-          <td>Ellos/Ellas son/están</td>
+          <td onmouseover="changeTo(this, 'Él/Ella/Ello es/esta')" onmouseout="changeTo(this, 'He/She/It is')">He/She/It is</td>
+          <td onmouseover="changeTo(this, 'Ellos/Ellas son/están')" onmouseout="changeTo(this, 'They are')">They are</td>
         </tr>
       </table>
 
-      <button id="sentenceButton" type="button" onclick="getSentence()">Get Sentence</button>
-
-      <section class="gridItem" id="displayWindow">
-
+      <section id="buttons">
+        <button id="sentenceButton" type="button" onclick="getSentence()">Get Sentence</button>
       </section>
-      <section class="gridItem" id="responseWindow">
 
-      </section>
+      <section class="gridItem" id="displayWindow"></section>
+
+      <section class="gridItem" id="responseWindow"></section>
 
     </div>
   </body>
@@ -254,11 +299,19 @@
       "Lucas", "Leslie", "Steven", "Sarah", "Thomas", "Tina"
     ]
 
+    let subject = null;
+
     let pronoun = null;
 
     let options = `<div id="answerBox"><div onclick="checkAnswer('Am')">Am</div>
       <div onclick="checkAnswer('Are')">Are</div>
       <div onclick="checkAnswer('Is')">Is</div></div>`;
+
+    let phrase = null;
+
+    const changeTo = function(element, text) {
+      element.textContent = text;
+    }
 
     const checkSpan = function(id) {
       //----------------------------------------------------//
@@ -311,18 +364,20 @@
       //the screen                                          //
       //----------------------------------------------------//
 
-      checkSpan("sentenceSpan");
+      checkSpan("sentenceDiv");
       checkSpan("responseSpan");
 
       let pronounIndex = getRandomNumber(0, 6);
       pronoun = Object.keys(pronouns)[pronounIndex];
-      let subject = pronoun;
+      subject = pronoun;
 
       let sentenceButton = document.getElementById("sentenceButton");
-        sentenceButton.onclick = null;
-        sentenceButton.style.filter = "opacity(25%)";
 
-      let phrase = null;
+
+      let buttonDiv = document.getElementById("buttons");
+        buttonDiv.innerHTML = options;
+
+      //let phrase = null;
       let phraseIndex = null;
       if (pronounIndex != 4) {
         phraseIndex = getRandomNumber(0, phrases.length - 1);
@@ -342,13 +397,13 @@
         subject = getName(subject);
       }
 
-      let sentence = `${subject} ${options} ${phrase}.`;
-      let sentenceSpan = document.createElement("span");
-      sentenceSpan.id = "sentenceSpan";
-      sentenceSpan.innerHTML = sentence;
+      let sentence = `${subject} __ ${phrase}.`;
+      let sentenceDiv = document.createElement("div");
+      sentenceDiv.id = "sentenceDiv";
+      sentenceDiv.innerHTML = sentence;
 
       let displayWindow = document.getElementById("displayWindow");
-      displayWindow.appendChild(sentenceSpan);
+      displayWindow.appendChild(sentenceDiv);
     }
 
     const checkAnswer = function(verb) {
@@ -370,11 +425,18 @@
 
         for (let i = 0; i < answers.length; i++) {
           answers[i].onclick = null;
+          if (answers[i].innerHTML === verb) {
+            answers[i].classList.add("correct");
+          }
         }
 
-        let sentenceButton = document.getElementById("sentenceButton");
-          sentenceButton.onclick = getSentence;
-          sentenceButton.style.filter = "opacity(100%)";
+        let sentence = `${subject} <span id="answer">${verb.toLowerCase()}</span> ${phrase}.`;
+        let sentenceDiv = document.getElementById("sentenceDiv");
+        sentenceDiv.innerHTML = sentence;
+
+        let buttonDiv = document.getElementById("buttons");
+          buttonDiv.innerHTML = "<button id=\"sentenceButton\" type=\"button\" onclick=\"getSentence()\">Get Sentence</button>";
+
       } else {
         responseSpan.classList.add("wrong");
         responseSpan.textContent = "Not quite, try again.";
