@@ -227,8 +227,6 @@
   </body>
   <script>
 
-
-
     let pronouns = {
       "I": "Am",
       "You": "Are",
@@ -241,7 +239,7 @@
 
     let phrases = [
       "in a hurry", "going to the store", "late for work",
-      "going to the movies", "40 years old", "tired", "angry", "feeling good",
+      "going to the movies", "40 years old", "tired", "feeling angry", "feeling good",
       "a doctor", "a teacher", "a mechanic"
     ];
 
@@ -249,6 +247,12 @@
       "cold outside", "going to rain", "an apple", "a backpack", "hot out", "a beautiful day",
       "a long way home", "in the kitchen", "on the shelf", "dark outside", "a long class"
     ];
+
+    let names = [
+      "Robert", "Rachel", "Daniel", "Denise", "Michael", "Michelle", "Steven", "Sophia",
+      "Chris", "Carrie", "Arthur", "Ashley", "Frank", "Florence", "Justin", "Jasmine",
+      "Lucas", "Leslie", "Steven", "Sarah", "Thomas", "Tina"
+    ]
 
     let pronoun = null;
 
@@ -269,6 +273,38 @@
       }
     }
 
+    const getName = function(subject) {
+      //----------------------------------------------------//
+      //Switches out names for pronouns                     //
+      //----------------------------------------------------//
+
+      let index = null;
+
+      switch (subject) {
+        case "He":
+        case "She":
+          index = getRandomNumber(0, names.length - 1);
+          return subject = names[index];
+          break;
+        case "We":
+          index = getRandomNumber(0, names.length - 1);
+          subject = names[index] + " and I";
+          return subject;
+          break;
+        case "They":
+          index = getRandomNumber(0, names.length - 1);
+          let index2 = getRandomNumber(0, names.length - 1);
+          while (index2 === index) {
+            index2 = getRandomNumber(0, names.length - 1);
+          }
+          subject = names[index] + " and " + names[index2];
+          return subject;
+          break;
+        default:
+          return subject;
+      }
+    }
+
     const getSentence = function() {
       //----------------------------------------------------//
       //Randomly generates a sentence and puts it on        //
@@ -280,10 +316,11 @@
 
       let pronounIndex = getRandomNumber(0, 6);
       pronoun = Object.keys(pronouns)[pronounIndex];
+      let subject = pronoun;
 
       let sentenceButton = document.getElementById("sentenceButton");
-      sentenceButton.onclick = null;
-      sentenceButton.style.filter = "opacity(25%)";
+        sentenceButton.onclick = null;
+        sentenceButton.style.filter = "opacity(25%)";
 
       let phrase = null;
       let phraseIndex = null;
@@ -301,8 +338,11 @@
         phrase = itPhrases[phraseIndex];
       }
 
+      if (getRandomNumber(0, 1)) {
+        subject = getName(subject);
+      }
 
-      let sentence = `${pronoun} ${options} ${phrase}.`;
+      let sentence = `${subject} ${options} ${phrase}.`;
       let sentenceSpan = document.createElement("span");
       sentenceSpan.id = "sentenceSpan";
       sentenceSpan.innerHTML = sentence;
